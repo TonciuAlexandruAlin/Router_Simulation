@@ -1,0 +1,24 @@
+Nivel de dificultate: Foarte greu.
+Timp estimativ: in jur de 60h
+
+    Prima data am testat daca am un pachet de tip IP sau ARP. Daca am un pachet
+de tip IP arunc pachetul daca TTL-ul este 0 sau 1. Verific checksum-ul vechi cu
+cel nou, iar daca nu sunt egale, arunc pachetul. Decrementez TTL-ul si atribui 
+noul checksum. In functia get_best_route calculez longest_prefix_match-ul printr-o
+cautare binara. Pentru optimizare si gasirea celei mai mari masti, dupa ce am gasit
+prefixul, caut cea mai mare masca si returnez structura auxiliara. 
+
+    Pentru sortare am folosit un qsort care sorteaza in O(nlogn) average time (stiam
+ca nu sunt sortate descrescator in tabela de rutare pentru worst case scenario O(n^2)).
+
+    Daca nu gasesc in tabela arp next-hopul de care am nevoie, trimit un request arp 
+catre broadcast ff:ff:ff:ff:ff:ff si adaug pachetul in coada pentru rutarea lui cand 
+primesc informatia ceruta la request.
+
+    Daca am un pachet de tip ARP verific daca este request sau reply. In caz ca am 
+request, va trebui sa trimit un reply. Completez header-ul ethernet si trimit reply-ul
+cu adresa MAC. In caz ca am primit reply, actualizez tabela arp cu adresa ip sursa si
+adresa MAC sursa a pachetului. Folosesc 2 cozi pentru a restaura coada initiala. Extrag
+din coada cate un pachet, si, daca next-hopul este egal cu Sender IP Address, il trimit
+catre acea adresa.
+
